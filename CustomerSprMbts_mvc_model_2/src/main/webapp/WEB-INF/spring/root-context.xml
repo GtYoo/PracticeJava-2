@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- 
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+		<property name="username" value="dev"/>
+		<property name="password" value="123456"/>
+	</bean>
+	-->
+	
+	<!-- Query log(Proxy활용) -->
+	<bean id="dataSourceSpied" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+		<property name="username" value="dev"/>
+		<property name="password" value="123456"/>
+	</bean>
+	<bean id="dataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="dataSourceSpied"/>
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE"/>
+				<property name="sqlPrefix" value="SQL        :"/>
+			</bean>
+		</property>
+	</bean>
+	
+	<!-- 트렌젝션 매니저 bean 등록 -->
+	<bean id="transactionManager" 
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- Annotation 기반의 트렌젝션 사용 -->
+	<context:annotation-config/>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- Annotation 기반의 Component Scan -->
+	<context:component-scan base-package="com.sprMbts.customer"/>
+	
+	<!-- sqlSessionFactory -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		
+		<!-- MyBatis 설정 파일 -->
+		<property name="configLocation" value="classpath:/sql-map-config.xml"/>
+		
+		<!-- mapper 위치 지정 -->
+		<property name="mapperLocations" value="classpath:/mappings/*.xml"/>
+		
+		<!--  트렌젝션 관리 -->
+		<property name="transactionFactory">
+			<bean class="org.mybatis.spring.transaction.SpringManagedTransactionFactory"/>
+		</property>
+	</bean>
+	
+	<!-- SqlSession -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
+		<constructor-arg ref="sqlSessionFactory"></constructor-arg>
+	</bean>
+	
+	<!-- DAO등록(DAO interface 위치) -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.sprMbts.customer"/>
+	</bean>
+
+</beans>

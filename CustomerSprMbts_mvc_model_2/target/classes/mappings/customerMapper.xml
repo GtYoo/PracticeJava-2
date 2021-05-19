@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sprMbts.customer.IDaoCst">
+
+	<select id="getUser" parameterType="int" resultType="cstDto">
+		SELECT * FROM CUSTOMER WHERE CODE = #{code}
+	</select>
+	<!-- 
+	<resultMap type="#modelname" id="YourResultSet">
+		<id property="param1" column="columnname1" />
+		<result property="param2" column="columnname2" />
+		<result property="param3" column="columnname3" />
+	</resultMap>
+	
+	<select id="getAll" resultMap="YourResultSet">
+		SELECT * FROM tablename1
+	</select>
+	-->
+	 
+	<select id="getAllUser" resultType="cstDto" parameterType="HashMap">
+		<![CDATA[
+		SELECT * FROM ( SELECT ROWNUM RNUM, O.*	FROM 
+		( SELECT *	FROM CUSTOMER ORDER BY CODE ASC	) O	) 
+		WHERE RNUM >= #{PAGE_NO} AND ROWNUM <= #{MAX_ROWS}
+		]]> 
+
+	</select>
+	
+	<insert id="insertUser" parameterType="cstDto">
+		INSERT INTO CUSTOMER
+		VALUES(#{code}, #{name}, #{email}, #{tel}, #{weight})
+	</insert>
+
+	<update id="updateUser">
+		UPDATE CUSTOMER SET NAME = #{name}, EMAIL = #{email}, 
+				TEL = #{tel}, WEIGHT = #{weight} WHERE CODE = #{code}
+	</update>
+
+	<delete id="deleteUser">
+		DELETE FROM CUSTOMER WHERE CODE = #{code}
+	</delete>
+	
+	<select id="cstCnt" resultType="int">
+		SELECT COUNT(*) CNT FROM CUSTOMER
+	</select>
+
+</mapper>
