@@ -33,7 +33,7 @@ Customer Data . Spring MVC model-2
 
   ```sql
   CREATE TABLE CUSTOMER(
-  	CODE   NUMBER(3)     PRIMARY KEY,
+      CODE   NUMBER(3)     PRIMARY KEY,
       NAME   VARCHAR2(30),
       EMAIL  VARCHAR2(30),
       TEL    VARCHAR2(35),
@@ -43,7 +43,7 @@ Customer Data . Spring MVC model-2
 
   ```sql
   CREATE TABLE MBR_HIST(
-  	REG_DT   TIMESTAMP,
+      REG_DT   TIMESTAMP,
       CONTENTS VARCHAR2(300)
   );
   ```
@@ -243,19 +243,19 @@ Customer Data . Spring MVC model-2
 
 - 실행
 
-    다건조회
+    - 다건조회
 
     ![ex-screenshot](CustomerSprMbts_mvc_model_2/images/cst_1_image.png)
 
-    단건조회
+    - 단건조회
 
     ![ex-screenshot](CustomerSprMbts_mvc_model_2/images/cst_2_image.png)
 
-    고객정보등록
+    - 고객정보등록
 
     ![ex-screenshot](CustomerSprMbts_mvc_model_2/images/cst_3_image.png)
 
-    삭제
+    - 삭제
 
     ![ex-screenshot](CustomerSprMbts_mvc_model_2/images/cst_4_image.png)
 
